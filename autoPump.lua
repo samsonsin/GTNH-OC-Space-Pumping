@@ -157,7 +157,7 @@ local function updateFluids()
   print('┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐')
   print(string.format('│ Target set according to Median: │ %-20s │ %10s + %10s = %10s %66s', medianFluid.label, formatFluid(medianFluid.amount), formatFluid(dynamicTargetOffset), formatFluid(target), '│'))
   print('├──────────────────────┬───────┬────────────────────────────────────────────────────────────────┬──────────────────────────────────────────────┬───────────────┤')
-  print('│ Name                 │ Dur   │        Old +      Added =        New :  Target +% =          % │                                           +% │           L/s │')
+  print('│ Name                 │ Dur   │        Old +      Added =        New :  Target +% =   Target % │                                           +% │           L/s │')
   print('├──────────────────────┼───────┼────────────────────────────────────────────────────────────────┼──────────────────────────────────────────────┼───────────────┤')
  
   -- Identify Low Fluids
