@@ -167,20 +167,13 @@ local function updateFluids()
     end
   end
 
-  -- Sort Based on Priority, then Fill Ratio
-  sortFluidsByPriorityThenFillRatio(lowFluids)
   return lowFluids
 end
 
 local function updatePumps(lowFluids)
-  local c = 1
   for _, pump in ipairs(pumps) do
-    --if current fluid is already at or above target, move to next fluid
-    if lowFluids[c].amount >= target then
-      c = c + 1
-    end
-    local fluid = lowFluids[c]
-
+    sortFluidsByPriorityThenFillRatio(lowFluids)
+    local fluid = lowFluids[1]
     if fluid ~= nil then
 
       -- Ensure pump is disabled
@@ -204,10 +197,7 @@ local function updatePumps(lowFluids)
       local percentageGain = oldAmount > 0 and ((fluid.amount - oldAmount) / oldAmount) * 100 or 0
       local targetPercentageGain = target > 0 and ((fluid.amount - oldAmount) / target) * 100 or 0
       local targetFillPercentage = (fluid.amount / target) * 100
-
-      sortFluidsByPriorityThenFillRatio(lowFluids)
-      pump.module.setParameters(9, 1, batchSize) -- Batch Size
-
+      
       print(string.format('│ %-20s │ %3d s │ %10s + %10s = %10s : %+8.3f %% = %8.3f %% │ %+42.3f %% │ %8.3f ML/s │', 
       fluid.label, 
       batchSize, 
@@ -218,8 +208,9 @@ local function updatePumps(lowFluids)
       targetFillPercentage,
       percentageGain, 
       (fluid.amount - oldAmount)/1e6/batchSize))
-    
-
+      
+      pump.module.setParameters(9, 1, batchSize) -- Batch Size
+      
       -- Run once
       pump.module.setWorkAllowed(true)
       os.sleep(0.1)
