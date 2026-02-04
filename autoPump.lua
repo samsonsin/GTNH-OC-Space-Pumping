@@ -172,6 +172,9 @@ end
 
 local function updatePumps(lowFluids)
   for _, pump in ipairs(pumps) do
+    -- Ensure pump is disabled
+    while pump.module.isMachineActive() do os.sleep(1) end
+
     sortFluidsByPriorityThenFillRatio(lowFluids)
     local fluid = lowFluids[1]
     if fluid ~= nil then
@@ -243,11 +246,6 @@ local function main()
     if next(lowFluids) ~= nil then
       updatePumps(lowFluids)
       n=0
-
-      -- Wait for Pumps to Finish
-      for _, pump in ipairs(pumps) do
-        while pump.module.isMachineActive() do os.sleep(1) end
-      end
 
     -- Nothing to Update, Sleep 3 Minutes
     elseif n==0 then
