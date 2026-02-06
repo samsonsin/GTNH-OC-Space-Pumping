@@ -1,5 +1,6 @@
 -- Credits: Fox, samsonsin
 local component = require('component')
+local term = require('term')
 local me = component.me_controller
 local pumps = {}
 local n = 0
@@ -184,6 +185,7 @@ local function parse(label)
 end
 
 local function printDashboard()
+  term.clear()
   print('\n┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐')
   print('| Space Elevator Fluid Levels (% of Target)                                                                                               |')
   print('├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤')
@@ -207,7 +209,6 @@ end
 -- ====================== MAIN =======================
 
 local function main()
-  print('autoPump: Reading Config... Scanning Pumps...')
   findPumps()
 
   for k, fluid in pairs(master) do
