@@ -73,7 +73,7 @@ local threshold = 0.95
 -- The Upper Limit on the Duration of an Iteration (Default: 30s)
 local maxBatchSize = 30
 
--- The Text Color
+-- The Text Color (Default: '\27[1;36m')
 local color = '\27[1;36m'
 
 -- (https://github.com/torch/sys/blob/master/colors.lua)
@@ -190,7 +190,7 @@ end
 local function printDashboard()
   term.clear()
   print('\n┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐')
-  print('│' .. color .. ' Space Elevator Fluid Levels (% of Target)' .. '\27[0m' .. '                                                                                               │')
+  print('│' .. color .. ' Space Elevator Fluid Levels (% of Target)' .. '\27[0m' .. string.rep(' ', 95) .. '│')
   print('├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤')
   print(string.format('│ %s %s %s %s │', parse('Hydrogen'),      parse('Hydrogen Sulfide'),  parse('Oil'),             parse('Molten Iron')))
   print(string.format('│ %s %s %s %s │', parse('Helium'),        parse('Sulfuric Acid'),     parse('Raw Oil'),         parse('Molten Copper')))
