@@ -4,106 +4,75 @@ local me = component.me_controller
 local pumps = {}
 local n = 0
 
--- CTRL+ALT+C to stop the script at any time.
+-- CTRL+ALT+C to stop the script at any time, or restart the computer.
 
 -- ===================== CONFIG ======================
 
--- Only change the PRIORITY value. Do not change the SETTING or RATE values.
+-- Only change the PRIORITY and TARGET values. Do not change the SETTING or RATE values.
+-- Quantum = 270e9 // Digital Singularity = 4e18 // Artificial Universe = 9e18
 
 local master = {
   -- Planet 2 -----------------------------------------------------------------------------
-  ['Chlorobenzene'] =     {priority=0,  amount=0,  setting={2,1},  rate=896000}, -- Gas 1
+  ['Chlorobenzene'] =     {target=10e9,  priority=1,  setting={2,1},  rate=896000}, -- Gas 1
 
   -- Planet 3 -----------------------------------------------------------------------------
-  ['Ender Goo'] =         {priority=0,  amount=0,  setting={3,1},  rate=32000}, -- Gas 1
-  ['Very Heavy Oil'] =    {priority=0,  amount=0,  setting={3,2},  rate=1400000}, -- Gas 2
-  ['Lava'] =              {priority=0,  amount=0,  setting={3,3},  rate=1800000}, -- Gas 3
-  ['Natural Gas'] =       {priority=0,  amount=0,  setting={3,4},  rate=1400000}, -- Gas 4
+  ['Ender Goo'] =         {target=0,     priority=1,  setting={3,1},  rate=32000}, -- Gas 1
+  ['Very Heavy Oil'] =    {target=0,     priority=1,  setting={3,2},  rate=1400000}, -- Gas 2
+  ['Lava'] =              {target=10e9,  priority=1,  setting={3,3},  rate=1800000}, -- Gas 3
+  ['Natural Gas'] =       {target=0,     priority=1,  setting={3,4},  rate=1400000}, -- Gas 4
 
   -- Planet 4 -----------------------------------------------------------------------------
-  ['Sulfuric Acid'] =     {priority=0,  amount=0,  setting={4,1},  rate=784000}, -- Gas 1
-  ['Molten Iron'] =       {priority=0,  amount=0,  setting={4,2},  rate=896000}, -- Gas 2
-  ['Oil'] =               {priority=0,  amount=0,  setting={4,3},  rate=1400000}, -- Gas 3
-  ['Heavy Oil'] =         {priority=0,  amount=0,  setting={4,4},  rate=1792000}, -- Gas 4
-  ['Molten Lead'] =       {priority=0,  amount=0,  setting={4,5},  rate=896000}, -- Gas 5
-  ['Raw Oil'] =           {priority=0,  amount=0,  setting={4,6},  rate=1400000}, -- Gas 6
-  ['Light Oil'] =         {priority=0,  amount=0,  setting={4,7},  rate=780000}, -- Gas 7
-  ['Carbon Dioxide'] =    {priority=0,  amount=0,  setting={4,8},  rate=1680000}, -- Gas 8
+  ['Sulfuric Acid'] =     {target=10e9,  priority=1,  setting={4,1},  rate=784000}, -- Gas 1
+  ['Molten Iron'] =       {target=10e9,  priority=2,  setting={4,2},  rate=896000}, -- Gas 2
+  ['Oil'] =               {target=10e9,  priority=1,  setting={4,3},  rate=1400000}, -- Gas 3
+  ['Heavy Oil'] =         {target=0,     priority=1,  setting={4,4},  rate=1792000}, -- Gas 4
+  ['Molten Lead'] =       {target=10e9,  priority=1,  setting={4,5},  rate=896000}, -- Gas 5
+  ['Raw Oil'] =           {target=0,     priority=1,  setting={4,6},  rate=1400000}, -- Gas 6
+  ['Light Oil'] =         {target=0,     priority=1,  setting={4,7},  rate=780000}, -- Gas 7
+  ['Carbon Dioxide'] =    {target=1e9,   priority=1,  setting={4,8},  rate=1680000}, -- Gas 8
 
   -- Planet 5 -----------------------------------------------------------------------------
-  ['Carbon Monoxide'] =   {priority=0,  amount=0,  setting={5,1},  rate=4480000}, -- Gas 1
-  ['Helium-3'] =          {priority=0,  amount=0,  setting={5,2},  rate=2800000}, -- Gas 2
-  ['Salt Water'] =        {priority=0,  amount=0,  setting={5,3},  rate=2800000}, -- Gas 3
-  ['Helium'] =            {priority=0,  amount=0,  setting={5,4},  rate=1400000}, -- Gas 4
-  ['Liquid Oxygen'] =     {priority=0,  amount=0,  setting={5,5},  rate=896000}, -- Gas 5
-  ['Neon'] =              {priority=0,  amount=0,  setting={5,6},  rate=32000}, -- Gas 6
-  ['Argon'] =             {priority=0,  amount=0,  setting={5,7},  rate=32000}, -- Gas 7
-  ['Krypton'] =           {priority=0,  amount=0,  setting={5,8},  rate=8000}, -- Gas 8
-  ['Methane'] =           {priority=0,  amount=0,  setting={5,9},  rate=1792000}, -- Gas 9
-  ['Hydrogen Sulfide'] =  {priority=0,  amount=0,  setting={5,10},  rate=392000}, -- Gas 10
-  ['Ethane'] =            {priority=0,  amount=0,  setting={5,11},  rate=1194000}, -- Gas 11
+  ['Carbon Monoxide'] =   {target=10e9,  priority=1,  setting={5,1},  rate=4480000}, -- Gas 1
+  ['Helium-3'] =          {target=10e9,  priority=1,  setting={5,2},  rate=2800000}, -- Gas 2
+  ['Salt Water'] =        {target=10e9,  priority=1,  setting={5,3},  rate=2800000}, -- Gas 3
+  ['Helium'] =            {target=10e9,  priority=3,  setting={5,4},  rate=1400000}, -- Gas 4
+  ['Liquid Oxygen'] =     {target=0,     priority=1,  setting={5,5},  rate=896000}, -- Gas 5
+  ['Neon'] =              {target=1e9,   priority=1,  setting={5,6},  rate=32000}, -- Gas 6
+  ['Argon'] =             {target=1e9,   priority=1,  setting={5,7},  rate=32000}, -- Gas 7
+  ['Krypton'] =           {target=1e9,   priority=1,  setting={5,8},  rate=8000}, -- Gas 8
+  ['Methane'] =           {target=1e9,   priority=1,  setting={5,9},  rate=1792000}, -- Gas 9
+  ['Hydrogen Sulfide'] =  {target=0,     priority=1,  setting={5,10},  rate=392000}, -- Gas 10
+  ['Ethane'] =            {target=0,     priority=1,  setting={5,11},  rate=1194000}, -- Gas 11
 
   -- Planet 6 -----------------------------------------------------------------------------
-  ['Deuterium'] =         {priority=0,  amount=0,  setting={6,1},  rate=1568000}, -- Gas 1
-  ['Tritium'] =           {priority=0,  amount=0,  setting={6,2},  rate=240000}, -- Gas 2
-  ['Ammonia'] =           {priority=0,  amount=0,  setting={6,3},  rate=240000}, -- Gas 3
-  ['Xenon'] =             {priority=0,  amount=0,  setting={6,4},  rate=16000}, -- Gas 4
-  ['Ethylene'] =          {priority=0,  amount=0,  setting={6,5},  rate=1792000}, -- Gas 5
+  ['Deuterium'] =         {target=10e9,  priority=1,  setting={6,1},  rate=1568000}, -- Gas 1
+  ['Tritium'] =           {target=10e9,  priority=1,  setting={6,2},  rate=240000}, -- Gas 2
+  ['Ammonia'] =           {target=10e9,  priority=2,  setting={6,3},  rate=240000}, -- Gas 3
+  ['Xenon'] =             {target=10e9,  priority=2,  setting={6,4},  rate=16000}, -- Gas 4
+  ['Ethylene'] =          {target=10e9,  priority=1,  setting={6,5},  rate=1792000}, -- Gas 5
 
   -- Planet 7 -----------------------------------------------------------------------------
-  ['Hydrofluoric Acid'] = {priority=0,  amount=0,  setting={7,1},  rate=672000}, -- Gas 1
-  ['Fluorine'] =          {priority=0,  amount=0,  setting={7,2},  rate=1792000}, -- Gas 2
-  ['Nitrogen'] =          {priority=0,  amount=0,  setting={7,3},  rate=1792000}, -- Gas 3
-  ['Oxygen'] =            {priority=0,  amount=0,  setting={7,4},  rate=1729000}, -- Gas 4
+  ['Hydrofluoric Acid'] = {target=10e9,  priority=1,  setting={7,1},  rate=672000}, -- Gas 1
+  ['Fluorine'] =          {target=10e9,  priority=1,  setting={7,2},  rate=1792000}, -- Gas 2
+  ['Nitrogen'] =          {target=10e9,  priority=3,  setting={7,3},  rate=1792000}, -- Gas 3
+  ['Oxygen'] =            {target=10e9,  priority=3,  setting={7,4},  rate=1729000}, -- Gas 4
 
   -- Planet 8 -----------------------------------------------------------------------------
-  ['Hydrogen'] =          {priority=0,  amount=0,  setting={8,1},  rate=1568000}, -- Gas 1
-  ['Liquid Air'] =        {priority=0,  amount=0,  setting={8,2},  rate=875000}, -- Gas 2
-  ['Molten Copper'] =     {priority=0,  amount=0,  setting={8,3},  rate=672000}, -- Gas 3
-  ['Unknown Liquid'] =    {priority=0,  amount=0,  setting={8,4},  rate=672000}, -- Gas 4
-  ['Distilled Water'] =   {priority=0,  amount=0,  setting={8,5},  rate=17920000}, -- Gas 5
-  ['Radon'] =             {priority=0,  amount=0,  setting={8,6},  rate=64000}, -- Gas 6
-  ['Molten Tin'] =        {priority=0,  amount=0,  setting={8,7},  rate=672000}} -- Gas 7
+  ['Hydrogen'] =          {target=10e9,  priority=3,  setting={8,1},  rate=1568000}, -- Gas 1
+  ['Liquid Air'] =        {target=0,     priority=1,  setting={8,2},  rate=875000}, -- Gas 2
+  ['Molten Copper'] =     {target=10e9,  priority=2,  setting={8,3},  rate=672000}, -- Gas 3
+  ['Unknown Liquid'] =    {target=10e9,  priority=1,  setting={8,4},  rate=672000}, -- Gas 4
+  ['Distilled Water'] =   {target=10e9,  priority=1,  setting={8,5},  rate=17920000}, -- Gas 5
+  ['Radon'] =             {target=1e9,   priority=1,  setting={8,6},  rate=64000}, -- Gas 6
+  ['Molten Tin'] =        {target=10e9,  priority=1,  setting={8,7},  rate=672000}} -- Gas 7
 
+-- The % of the target when considered complete (Default: 95%)
+local threshold = 0.95
 
-local target = 1
-local dynamicTargetOffset = 10e9 -- adds to the median fluid amount to set as the target
-local singularityCellSize = 4.61e18
-local maxStorageAmount = singularityCellSize*0.99
-
--- The upper limit on the duration of an iteration (Default: 60s)
-local maxBatchSize = 60
+-- The upper limit on the duration of an iteration (Default: 30s)
+local maxBatchSize = 30
 
 -- =================== END CONFIG ====================
-
-local function sortFluidsByPriorityThenFillRatio(lowFluids)
-  table.sort(lowFluids, function(a, b)
-    if a.priority - b.priority ~= 0 then
-        return a.priority > b.priority
-    else
-        return (a.amount / target) < (b.amount / target)
-    end
-  end)
-end
-
-local function sortFluidsByAmount(lowFluids)
-  table.sort(lowFluids, function(a, b)
-    return a.amount  < b.amount 
-  end)
-end
-
-local function formatFluid(amount)
-        local suffixes = {' ', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'}
-        local index = 1
-        local value = amount
-        
-        while value >= 1000 and index < #suffixes do
-          value = value / 1000
-          index = index + 1
-        end
-        
-        return string.format('%.3f %sL', value, suffixes[index])
-      end
 
 local function findPumps()
   for address in component.list('gt_machine') do
@@ -112,15 +81,15 @@ local function findPumps()
 
     -- Tier 1 Module
     if name == "projectmodulepumpt1" then
-      table.insert(pumps, {module=module, threads=1, mult=4, priority=1})
+      table.insert(pumps, {module=module, threads=1, mult=4, priority=1, fluid=nil, amount=0})
 
     -- Tier 2 Module
     elseif name == "projectmodulepumpt2" then
-      table.insert(pumps, {module=module, threads=4, mult=16, priority=2})
+      table.insert(pumps, {module=module, threads=4, mult=16, priority=2, fluid=nil, amount=0})
 
     -- Tier 3 Module
     elseif name == "projectmodulepumpt3" then
-      table.insert(pumps, {module=module, threads=4, mult=256, priority=3})
+      table.insert(pumps, {module=module, threads=4, mult=256, priority=3, fluid=nil, amount=0})
     end
   end
 
@@ -132,39 +101,25 @@ local function updateFluids()
 
   -- Reset Everything to Zero
   local lowFluids = {}
-  for _, fluid in pairs(master) do
-    fluid.amount = 0
-  end
+  for _, fluid in pairs(master) do fluid.amount = 0 end
 
-  -- Update the Fluids Available
+  -- Update Fluids from ME Network
   for _, fluid in ipairs(me.getFluidsInNetwork()) do
     if master[fluid.label] ~= nil then
       master[fluid.label].amount = fluid.amount
     end
   end
 
-  -- Convert master dictionary to array for sorting
-  local fluidArray = {}
-  for _, fluid in pairs(master) do
-    table.insert(fluidArray, fluid)
+  -- Update Fluids from Pumps
+  for _, pump in ipairs(pumps) do
+    if pump.fluid ~= nil then
+      master[pump.fluid].amount = master[pump.fluid].amount + pump.amount
+    end
   end
-  
-  -- Find Median to set dynamic target
-  sortFluidsByAmount(fluidArray)
-  local medianFluid = #fluidArray > 0 and fluidArray[math.ceil(#fluidArray / 2)] or nil
-  target = medianFluid ~= nil and math.min(medianFluid.amount + dynamicTargetOffset, maxStorageAmount) or maxStorageAmount
 
-  print('┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐')
-  print(string.format('│ Target set according to Median: │ %-20s │ %10s + %10s = %10s %66s', medianFluid.label, formatFluid(medianFluid.amount), formatFluid(dynamicTargetOffset), formatFluid(target), '│'))
-  print('├──────────────────────┬───────┬────────────────────────────────────────────────────────────────┬──────────────────────────────────────────────┬───────────────┤')
-  print('│ Name                 │ Dur   │        Old +      Added =        New :  Target +% =   Target % │                                           +% │           L/s │')
-  print('├──────────────────────┼───────┼────────────────────────────────────────────────────────────────┼──────────────────────────────────────────────┼───────────────┤')
- 
   -- Identify Low Fluids
   for _, fluid in pairs(master) do
-    if fluid.amount < target then
-      table.insert(lowFluids, fluid)
-    end
+    if fluid.amount < threshold * fluid.target then table.insert(lowFluids, fluid) end
   end
 
   return lowFluids
@@ -172,49 +127,42 @@ end
 
 local function updatePumps(lowFluids)
   for _, pump in ipairs(pumps) do
-    -- Ensure pump is disabled
-    while pump.module.isMachineActive() do os.sleep(1) end
 
-    sortFluidsByPriorityThenFillRatio(lowFluids)
+    -- Ensure Pump is Disabled
+    while pump.module.isMachineActive() do os.sleep(2) end
+    pump.fluid = nil
+    pump.amount = 0
+
+    -- Sort Low Fluids based on Priority and % of Target
+    table.sort(lowFluids, function(a, b)
+      return (1 - (a.amount / a.target) ^ a.priority) > (1 - (b.amount / b.target) ^ b.priority)
+    end)
+
     local fluid = lowFluids[1]
     if fluid ~= nil then
 
-      -- Ensure pump is disabled
-      while pump.module.isMachineActive() do os.sleep(1) end
-
-      -- Remove fluid if already at target. next fluid will be at position 1 after removal
-      if lowFluids[1].amount >= target then
-        table.remove(lowFluids, 1)
-      end
-
-      -- Change planet and gas for ALL threads
+      -- Change Planet and Gas for all Threads
       for i=1, pump.threads do
         pump.module.setParameters(2*(i-1), 0, fluid.setting[1]) -- Planet
         pump.module.setParameters(2*(i-1), 1, fluid.setting[2]) -- Gas
       end
 
-      -- Calculate varous amounts, update fluid amount preemptively
-      local batchSize = math.min(maxBatchSize, math.ceil((maxStorageAmount - fluid.amount) / (fluid.rate * pump.mult)))
-      local oldAmount = fluid.amount
-      fluid.amount = fluid.amount + (batchSize * fluid.rate * pump.mult)
-      local percentageGain = oldAmount > 0 and ((fluid.amount - oldAmount) / oldAmount) * 100 or 0
-      local targetPercentageGain = target > 0 and ((fluid.amount - oldAmount) / target) * 100 or 0
-      local targetFillPercentage = (fluid.amount / target) * 100
-      
-      print(string.format('│ %-20s │ %3d s │ %10s + %10s = %10s : %+8.3f %% = %8.3f %% │ %+42.3f %% │ %8.3f ML/s │', 
-      fluid.label, 
-      batchSize, 
-      formatFluid(oldAmount), 
-      formatFluid((fluid.amount - oldAmount)), 
-      formatFluid(fluid.amount), 
-      targetPercentageGain,
-      targetFillPercentage,
-      percentageGain, 
-      (fluid.amount - oldAmount)/1e6/batchSize))
-      
+      -- Change Batch Size based on Distance from Target
+      local batchSize = math.min(maxBatchSize, math.ceil((fluid.target - fluid.amount) / (fluid.rate * pump.mult)))
       pump.module.setParameters(9, 1, batchSize) -- Batch Size
-      
-      -- Run once
+      print(string.format('autoPump: Running %s for %d Seconds', fluid.label, batchSize))
+
+      -- Preemptively Update Fluid Amount
+      pump.fluid = fluid.label
+      pump.amount = batchSize * fluid.rate * pump.mult
+      fluid.amount = fluid.amount + pump.amount
+
+      -- Remove Fluid if above Target Threshold
+      if fluid.amount >= threshold * fluid.target then
+        table.remove(lowFluids, 1)
+      end
+
+      -- Run Once
       pump.module.setWorkAllowed(true)
       os.sleep(0.1)
       pump.module.setWorkAllowed(false)
@@ -223,7 +171,37 @@ local function updatePumps(lowFluids)
       return
     end
   end
-  print('└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘')
+end
+
+local function parse(label)
+  local fluid = master[label]
+  if fluid.target == 0 then
+    return string.format('[----------] %-20s', fluid.label)
+  else
+    local percent = math.min(10, math.floor(10 * (fluid.amount / fluid.target)))
+    return string.format('[%s%s] %-20s', string.rep('■', percent), string.rep('□', 10-percent), fluid.label)
+  end
+end
+
+local function printDashboard()
+  print('\n┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐')
+  print('| Space Elevator Fluid Levels (% of Target)                                                                                               |')
+  print('├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤')
+  print(string.format('| %s %s %s %s |', parse('Hydrogen'),      parse('Hydrogen Sulfide'),  parse('Oil'),             parse('Molten Iron')))
+  print(string.format('| %s %s %s %s |', parse('Helium'),        parse('Sulfuric Acid'),     parse('Raw Oil'),         parse('Molten Copper')))
+  print(string.format('| %s %s %s %s |', parse('Nitrogen'),      parse('Hydrofluoric Acid'), parse('Light Oil'),       parse('Molten Tin')))
+  print(string.format('| %s %s %s %s |', parse('Oxygen'),        string.rep(' ', 33),        parse('Heavy Oil'),       parse('Molten Lead')))
+  print(string.format('| %s %s %s %s |', parse('Fluorine'),      parse('Ammonia'),           parse('Natural Gas'),     string.rep(' ', 33)))
+  print(string.format('| %s %s %s %s |', string.rep(' ', 33),    parse('Ethylene'),          string.rep(' ', 33),      parse('Helium-3')))
+  print(string.format('| %s %s %s %s |', parse('Argon'),         parse('Ethane'),            parse('Distilled Water'), parse('Deuterium')))
+  print(string.format('| %s %s %s %s |', parse('Radon'),         parse('Methane'),           parse('Salt Water'),      parse('Tritium')))
+  print(string.format('| %s %s %s %s |', parse('Neon'),          string.rep(' ', 33),        parse('Chlorobenzene'),   string.rep(' ', 33)))
+  print(string.format('| %s %s %s %s |', parse('Krypton'),       parse('Carbon Monoxide'),   parse('Unknown Liquid'),  parse('Lava')))
+  print(string.format('| %s %s %s %s |', parse('Xenon'),         parse('Carbon Dioxide'),    string.rep(' ', 33),      parse('Ender Goo')))
+  print(string.format('| %s %s %s %s |', string.rep(' ', 33),    string.rep(' ', 33),        string.rep(' ', 33),      string.rep(' ', 33)))
+  print(string.format('| %s %s %s %s |', parse('Liquid Air'),    string.rep(' ', 33),        string.rep(' ', 33),      string.rep(' ', 33)))
+  print(string.format('| %s %s %s %s |', parse('Liquid Oxygen'), string.rep(' ', 33),        string.rep(' ', 33),      string.rep(' ', 33)))
+  print('└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘\n')
 end
 
 -- ====================== MAIN =======================
@@ -241,17 +219,29 @@ local function main()
 
     -- Update Fluid Amounts
     local lowFluids = updateFluids()
-
-    -- Update Pump Settings
     if next(lowFluids) ~= nil then
-      updatePumps(lowFluids)
-      n=0
 
-    -- Nothing to Update, Sleep 3 Minutes
-    elseif n==0 then
+      -- Print Dashboard
+      if n % 5 == 0 then
+        printDashboard()
+      end
+
+      -- Update Pump Settings
+      updatePumps(lowFluids)
+      n = n+1
+
+    elseif n > 0 then
+
+      -- Reset Pump Settings
+      for _, pump in ipairs(pumps) do
+        pump.fluid = nil
+        pump.amount = 0
+      end
+
+      -- Nothing to Update, Sleep 3 Minutes
       print('autoPump: Sleeping...\n')
       os.sleep(180)
-      n=1
+      n=0
     end
   end
 end
