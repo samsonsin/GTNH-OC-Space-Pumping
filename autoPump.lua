@@ -3,7 +3,7 @@ local component = require('component')
 local term = require('term')
 local me = component.me_controller
 local pumps = {}
-local n = 0
+local n = 1
 
 -- CTRL+ALT+C to stop the script at any time, or restart the computer.
 
@@ -67,11 +67,21 @@ local master = {
   ['Radon'] =             {target=1e9,   priority=1,  setting={8,6},  rate=64000}, -- Gas 6
   ['Molten Tin'] =        {target=10e9,  priority=1,  setting={8,7},  rate=672000}} -- Gas 7
 
--- The % of the target when considered complete (Default: 95%)
+-- The % of the Target when Considered Complete (Default: 95%)
 local threshold = 0.95
 
--- The upper limit on the duration of an iteration (Default: 30s)
+-- The Upper Limit on the Duration of an Iteration (Default: 30s)
 local maxBatchSize = 30
+
+-- The Text Color
+local color = '\27[1;36m'
+
+-- (https://github.com/torch/sys/blob/master/colors.lua)
+-- Cyan = '\27[1;36m'
+-- Green = '\27[1;32m'
+-- Red = '\27[0;31m'
+-- Magenta = '\27[0;35m'
+-- Yellow = '\27[1;33m'
 
 -- =================== END CONFIG ====================
 
@@ -106,16 +116,12 @@ local function updateFluids()
 
   -- Update Fluids from ME Network
   for _, fluid in ipairs(me.getFluidsInNetwork()) do
-    if master[fluid.label] ~= nil then
-      master[fluid.label].amount = fluid.amount
-    end
+    if master[fluid.label] ~= nil then master[fluid.label].amount = fluid.amount end
   end
 
   -- Update Fluids from Pumps
   for _, pump in ipairs(pumps) do
-    if pump.fluid ~= nil then
-      master[pump.fluid].amount = master[pump.fluid].amount + pump.amount
-    end
+    if pump.fluid ~= nil then master[pump.fluid].amount = master[pump.fluid].amount + pump.amount end
   end
 
   -- Identify Low Fluids
@@ -131,8 +137,7 @@ local function updatePumps(lowFluids)
 
     -- Ensure Pump is Disabled
     while pump.module.isMachineActive() do os.sleep(2) end
-    pump.fluid = nil
-    pump.amount = 0
+    pump.fluid, pump.amount = nil, 0
 
     -- Sort Low Fluids based on Priority and % of Target
     table.sort(lowFluids, function(a, b)
@@ -159,9 +164,7 @@ local function updatePumps(lowFluids)
       fluid.amount = fluid.amount + pump.amount
 
       -- Remove Fluid if above Target Threshold
-      if fluid.amount >= threshold * fluid.target then
-        table.remove(lowFluids, 1)
-      end
+      if fluid.amount >= threshold * fluid.target then table.remove(lowFluids, 1) end
 
       -- Run Once
       pump.module.setWorkAllowed(true)
@@ -179,30 +182,30 @@ local function parse(label)
   if fluid.target == 0 then
     return string.format('[----------] %-20s', fluid.label)
   else
-    local percent = math.min(10, math.floor(10 * (fluid.amount / fluid.target)))
-    return string.format('[%s%s] %-20s', string.rep('■', percent), string.rep('□', 10-percent), fluid.label)
+    local percent = math.min(10, math.ceil(10 * (fluid.amount / fluid.target)))
+    return string.format('[%s%s] %-20s', color .. string.rep('■', percent) .. '\27[0m', string.rep('□', 10-percent), fluid.label)
   end
 end
 
 local function printDashboard()
   term.clear()
   print('\n┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐')
-  print('| Space Elevator Fluid Levels (% of Target)                                                                                               |')
+  print('│' .. color .. ' Space Elevator Fluid Levels (% of Target)' .. '\27[0m' .. '                                                                                               │')
   print('├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤')
-  print(string.format('| %s %s %s %s |', parse('Hydrogen'),      parse('Hydrogen Sulfide'),  parse('Oil'),             parse('Molten Iron')))
-  print(string.format('| %s %s %s %s |', parse('Helium'),        parse('Sulfuric Acid'),     parse('Raw Oil'),         parse('Molten Copper')))
-  print(string.format('| %s %s %s %s |', parse('Nitrogen'),      parse('Hydrofluoric Acid'), parse('Light Oil'),       parse('Molten Tin')))
-  print(string.format('| %s %s %s %s |', parse('Oxygen'),        string.rep(' ', 33),        parse('Heavy Oil'),       parse('Molten Lead')))
-  print(string.format('| %s %s %s %s |', parse('Fluorine'),      parse('Ammonia'),           parse('Natural Gas'),     string.rep(' ', 33)))
-  print(string.format('| %s %s %s %s |', string.rep(' ', 33),    parse('Ethylene'),          string.rep(' ', 33),      parse('Helium-3')))
-  print(string.format('| %s %s %s %s |', parse('Argon'),         parse('Ethane'),            parse('Distilled Water'), parse('Deuterium')))
-  print(string.format('| %s %s %s %s |', parse('Radon'),         parse('Methane'),           parse('Salt Water'),      parse('Tritium')))
-  print(string.format('| %s %s %s %s |', parse('Neon'),          string.rep(' ', 33),        parse('Chlorobenzene'),   string.rep(' ', 33)))
-  print(string.format('| %s %s %s %s |', parse('Krypton'),       parse('Carbon Monoxide'),   parse('Unknown Liquid'),  parse('Lava')))
-  print(string.format('| %s %s %s %s |', parse('Xenon'),         parse('Carbon Dioxide'),    string.rep(' ', 33),      parse('Ender Goo')))
-  print(string.format('| %s %s %s %s |', string.rep(' ', 33),    string.rep(' ', 33),        string.rep(' ', 33),      string.rep(' ', 33)))
-  print(string.format('| %s %s %s %s |', parse('Liquid Air'),    string.rep(' ', 33),        string.rep(' ', 33),      string.rep(' ', 33)))
-  print(string.format('| %s %s %s %s |', parse('Liquid Oxygen'), string.rep(' ', 33),        string.rep(' ', 33),      string.rep(' ', 33)))
+  print(string.format('│ %s %s %s %s │', parse('Hydrogen'),      parse('Hydrogen Sulfide'),  parse('Oil'),             parse('Molten Iron')))
+  print(string.format('│ %s %s %s %s │', parse('Helium'),        parse('Sulfuric Acid'),     parse('Raw Oil'),         parse('Molten Copper')))
+  print(string.format('│ %s %s %s %s │', parse('Nitrogen'),      parse('Hydrofluoric Acid'), parse('Light Oil'),       parse('Molten Tin')))
+  print(string.format('│ %s %s %s %s │', parse('Oxygen'),        string.rep(' ', 33),        parse('Heavy Oil'),       parse('Molten Lead')))
+  print(string.format('│ %s %s %s %s │', parse('Fluorine'),      parse('Ammonia'),           parse('Natural Gas'),     string.rep(' ', 33)))
+  print(string.format('│ %s %s %s %s │', string.rep(' ', 33),    parse('Ethylene'),          string.rep(' ', 33),      parse('Helium-3')))
+  print(string.format('│ %s %s %s %s │', parse('Argon'),         parse('Ethane'),            parse('Distilled Water'), parse('Deuterium')))
+  print(string.format('│ %s %s %s %s │', parse('Radon'),         parse('Methane'),           parse('Salt Water'),      parse('Tritium')))
+  print(string.format('│ %s %s %s %s │', parse('Neon'),          string.rep(' ', 33),        parse('Chlorobenzene'),   string.rep(' ', 33)))
+  print(string.format('│ %s %s %s %s │', parse('Krypton'),       parse('Carbon Monoxide'),   parse('Unknown Liquid'),  parse('Lava')))
+  print(string.format('│ %s %s %s %s │', parse('Xenon'),         parse('Carbon Dioxide'),    string.rep(' ', 33),      parse('Ender Goo')))
+  print(string.format('│ %s %s %s %s │', string.rep(' ', 33),    string.rep(' ', 33),        string.rep(' ', 33),      string.rep(' ', 33)))
+  print(string.format('│ %s %s %s %s │', parse('Liquid Air'),    string.rep(' ', 33),        string.rep(' ', 33),      string.rep(' ', 33)))
+  print(string.format('│ %s %s %s %s │', parse('Liquid Oxygen'), string.rep(' ', 33),        string.rep(' ', 33),      string.rep(' ', 33)))
   print('└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘\n')
 end
 
@@ -223,7 +226,7 @@ local function main()
     if next(lowFluids) ~= nil then
 
       -- Print Dashboard
-      if n % 5 == 0 then
+      if n % 5 == 1 then
         printDashboard()
       end
 
@@ -235,11 +238,11 @@ local function main()
 
       -- Reset Pump Settings
       for _, pump in ipairs(pumps) do
-        pump.fluid = nil
-        pump.amount = 0
+        pump.fluid, pump.amount = nil, 0
       end
 
       -- Nothing to Update, Sleep 3 Minutes
+      printDashboard()
       print('autoPump: Sleeping...\n')
       os.sleep(180)
       n=0
