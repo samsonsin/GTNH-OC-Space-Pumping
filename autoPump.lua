@@ -154,11 +154,11 @@ local function updateFluids()
   local medianFluid = #fluidArray > 0 and fluidArray[math.ceil(#fluidArray / 2)] or nil
   target = medianFluid ~= nil and math.min(medianFluid.amount + dynamicTargetOffset, maxStorageAmount) or maxStorageAmount
 
-  print('┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐')
-  print(string.format('│ Target set according to Median: │ %-20s │ %10s + %10s = %10s %66s', medianFluid.label, formatFluid(medianFluid.amount), formatFluid(dynamicTargetOffset), formatFluid(target), '│'))
-  print('├──────────────────────┬───────┬────────────────────────────────────────────────────────────────┬──────────────────────────────────────────────┬───────────────┤')
-  print('│ Name                 │ Dur   │        Old +      Added =        New :  Target +% =   Target % │                                           +% │           L/s │')
-  print('├──────────────────────┼───────┼────────────────────────────────────────────────────────────────┼──────────────────────────────────────────────┼───────────────┤')
+  print('\27[H\27[2K┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐')
+  print(string.format('│ Target set according to Median: │ %-20s │ %10s + %10s = %10s          (Max 43 lines visible)            By Fox & samsonsin  │', medianFluid.label, formatFluid(medianFluid.amount), formatFluid(dynamicTargetOffset), formatFluid(target)))
+  print('├──────────────────────┬────────────┬──────────┬────────────────────────────────────────────────────────────────┬──────────────────────────────┬───────────────┤')
+  print('│ Name                 │ Duration   │ Priority │        Old +      Added =        New :  Target +% =   Target % │                           +% │           L/s │')
+  print('├──────────────────────┼────────────┼──────────┼────────────────────────────────────────────────────────────────┼──────────────────────────────┼───────────────┤')
  
   -- Identify Low Fluids
   for _, fluid in pairs(master) do
@@ -201,9 +201,10 @@ local function updatePumps(lowFluids)
       local targetPercentageGain = target > 0 and ((fluid.amount - oldAmount) / target) * 100 or 0
       local targetFillPercentage = (fluid.amount / target) * 100
       
-      print(string.format('│ %-20s │ %3d s │ %10s + %10s = %10s : %+8.3f %% = %8.3f %% │ %+42.3f %% │ %8.3f ML/s │', 
+      print(string.format('│ %-20s │ %8d s │ %8d │ %10s + %10s = %10s : %+8.3f %% = %8.3f %% │ %+26.3f %% │ %8.3f ML/s │', 
       fluid.label, 
       batchSize, 
+      fluid.priority,
       formatFluid(oldAmount), 
       formatFluid((fluid.amount - oldAmount)), 
       formatFluid(fluid.amount), 
