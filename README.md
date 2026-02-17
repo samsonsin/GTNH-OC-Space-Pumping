@@ -34,7 +34,7 @@ Provides detailed real-time output including:
 - Percentage gains relative to both previous amount and target
 - Flow rates in ML/s
 
-<img width="1965" height="1246" alt="image" src="https://github.com/user-attachments/assets/87cad0d4-0d38-4d5c-81ea-2f717dc73082" />
+<img width="1971" height="1253" alt="Screenshot 2026-02-17 123028" src="https://github.com/user-attachments/assets/13f36387-291a-4b18-892a-2ee0220455db" />
 
 
 ## Configuration
