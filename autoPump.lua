@@ -217,7 +217,7 @@ local function updatePumps(lowFluids)
       
       -- Run once
       pump.module.setWorkAllowed(true)
-      os.sleep(0.1)
+      os.sleep(0.2)
       pump.module.setWorkAllowed(false)
 
     else
