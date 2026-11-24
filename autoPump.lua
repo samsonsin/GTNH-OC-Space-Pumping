@@ -188,9 +188,9 @@ local function updatePumps(lowFluids)
       end
 
       -- Change planet and gas for ALL threads
-      for i=1, pump.threads do
-        pump.module.setParameters(2*(i-1), 0, fluid.setting[1]) -- Planet
-        pump.module.setParameters(2*(i-1), 1, fluid.setting[2]) -- Gas
+      for i=0, pump.threads-1 do
+        pump.module.setParameter('recipe' .. i .. '.planetType', fluid.setting[1])
+        pump.module.setParameter('recipe' .. i .. '.gasType', fluid.setting[2])
       end
 
       -- Calculate varous amounts, update fluid amount preemptively
@@ -213,7 +213,7 @@ local function updatePumps(lowFluids)
       percentageGain, 
       (fluid.amount - oldAmount)/1e6/batchSize))
       
-      pump.module.setParameters(9, 1, batchSize) -- Batch Size
+      pump.module.setParameter('batch', batchSize)
       
       -- Run once
       pump.module.setWorkAllowed(true)
